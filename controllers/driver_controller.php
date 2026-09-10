@@ -197,7 +197,7 @@ function driver_controller($conn)
         redirect('index.php?page=driver');
     }
 
-    /* ---------------- Data for the view ---------------- */
+    /* ---------------- Data for the view -------------- */
     $assignedTrips = get_assigned_trips_by_driver($conn, (int) $me['id']);
     $tripLogs = get_trip_logs_by_driver($conn, (int) $me['id']);
     $incidents = get_incidents_by_driver($conn, (int) $me['id']);
