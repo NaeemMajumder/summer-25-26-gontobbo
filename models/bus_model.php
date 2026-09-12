@@ -1,13 +1,13 @@
 <?php
-models/bus_model.php
-*/
+// models/bus_model.php
+
 
 
 function get_bus_by_id($bus_id)
 {
     global $conn;
 
-    $sql  = "SELECT * FROM buses WHERE bus_id = ? LIMIT 1";
+    $sql = "SELECT * FROM buses WHERE bus_id = ? LIMIT 1";
     $stmt = mysqli_prepare($conn, $sql);
     mysqli_stmt_bind_param($stmt, "i", $bus_id);
     mysqli_stmt_execute($stmt);
@@ -21,7 +21,7 @@ function get_active_buses()
 {
     global $conn;
 
-    $sql    = "SELECT * FROM buses WHERE status = 'active' ORDER BY name ASC";
+    $sql = "SELECT * FROM buses WHERE status = 'active' ORDER BY name ASC";
     $result = mysqli_query($conn, $sql);
 
     $buses = [];
@@ -36,14 +36,16 @@ function get_active_buses()
 // Enforces prepared statements for all queries
 // ==========================================
 
-function get_buses($conn) {
+function get_buses($conn)
+{
     $sql = "SELECT bus_id, bus_number, name, type, total_seats, status, service_trip_limit, trips_since_service 
             FROM buses ORDER BY bus_id DESC";
     $res = mysqli_query($conn, $sql);
     return mysqli_fetch_all($res, MYSQLI_ASSOC);
 }
 
-function get_bus($conn, $id) {
+function get_bus($conn, $id)
+{
     $sql = "SELECT bus_id, bus_number, name, type, total_seats, status, service_trip_limit, trips_since_service 
             FROM buses WHERE bus_id = ?";
     $stmt = mysqli_prepare($conn, $sql);
@@ -54,7 +56,8 @@ function get_bus($conn, $id) {
     return $row;
 }
 
-function search_buses($conn, $term) {
+function search_buses($conn, $term)
+{
     $like = '%' . $term . '%';
     $sql = "SELECT bus_id, bus_number, name, type, total_seats, status, service_trip_limit, trips_since_service 
             FROM buses 
@@ -68,7 +71,8 @@ function search_buses($conn, $term) {
     return $rows;
 }
 
-function bus_number_exists($conn, $bus_number, $excludeId = 0) {
+function bus_number_exists($conn, $bus_number, $excludeId = 0)
+{
     $sql = "SELECT bus_id FROM buses WHERE bus_number = ? AND bus_id != ?";
     $stmt = mysqli_prepare($conn, $sql);
     mysqli_stmt_bind_param($stmt, 'si', $bus_number, $excludeId);
@@ -79,18 +83,20 @@ function bus_number_exists($conn, $bus_number, $excludeId = 0) {
     return $exists;
 }
 
-function add_bus($conn, $bus_number, $name, $type, $total_seats, $status, $service_trip_limit) {
+function add_bus($conn, $bus_number, $name, $type, $total_seats, $status, $service_trip_limit)
+{
     $sql = "INSERT INTO buses (bus_number, name, type, total_seats, status, service_trip_limit, trips_since_service) 
             VALUES (?, ?, ?, ?, ?, ?, 0)";
     $stmt = mysqli_prepare($conn, $sql);
     // Types: string, string, string, integer, string, integer -> 'ssisii'
-    mysqli_stmt_bind_param($stmt, 'ssisii', $bus_number, $name, $type, $total_seats, $status, $service_trip_limit);
+     mysqli_stmt_bind_param($stmt, 'sssisi', $bus_number, $name, $type, $total_seats, $status, $service_trip_limit);
     $ok = mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);
     return $ok;
 }
 
-function update_bus($conn, $id, $bus_number, $name, $type, $total_seats, $status, $service_trip_limit) {
+function update_bus($conn, $id, $bus_number, $name, $type, $total_seats, $status, $service_trip_limit)
+{
     $sql = "UPDATE buses 
             SET bus_number = ?, name = ?, type = ?, total_seats = ?, status = ?, service_trip_limit = ? 
             WHERE bus_id = ?";
@@ -102,7 +108,8 @@ function update_bus($conn, $id, $bus_number, $name, $type, $total_seats, $status
     return $ok;
 }
 
-function delete_bus($conn, $id) {
+function delete_bus($conn, $id)
+{
     $stmt = mysqli_prepare($conn, "DELETE FROM buses WHERE bus_id = ?");
     mysqli_stmt_bind_param($stmt, 'i', $id);
     $ok = mysqli_stmt_execute($stmt);

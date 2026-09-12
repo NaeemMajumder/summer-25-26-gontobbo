@@ -432,6 +432,12 @@ CREATE TABLE `users` (
   `phone` varchar(20) DEFAULT NULL,
   `password` varchar(255) NOT NULL,
   `role` enum('passenger','driver','admin','manager') NOT NULL,
+  `nid_number` varchar(30) DEFAULT NULL,
+  `license_number` varchar(50) DEFAULT NULL,
+  `experience_years` int(11) DEFAULT NULL,
+  `previous_company` varchar(150) DEFAULT NULL,
+  `reset_token` varchar(100) DEFAULT NULL,
+  `remember_token` varchar(100) DEFAULT NULL,
   `created_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 

@@ -1,12 +1,12 @@
 <?php
-models/trip_model.php
-*/
+// models/trip_model.php
+
 
 
 // Whitelisted sort options for search_trips() — never interpolate raw user input into ORDER BY
 const TRIP_SORT_COLUMNS = [
     'departure' => 't.departure_time ASC',
-    'fare_low'  => 't.fare ASC',
+    'fare_low' => 't.fare ASC',
     'fare_high' => 't.fare DESC',
 ];
 
@@ -35,12 +35,12 @@ function search_trips($from, $to, $date, $type = '', $sort = 'departure')
           AND t.status = 'scheduled'
     ";
 
-    $types  = "sss";
+    $types = "sss";
     $params = [$from, $to, $date];
 
     if ($type === 'AC' || $type === 'Non-AC') {
-        $sql     .= " AND b.type = ? ";
-        $types   .= "s";
+        $sql .= " AND b.type = ? ";
+        $types .= "s";
         $params[] = $type;
     }
 
@@ -96,7 +96,7 @@ function get_trip_basic($trip_id)
 {
     global $conn;
 
-    $sql  = "SELECT * FROM trips WHERE trip_id = ? LIMIT 1";
+    $sql = "SELECT * FROM trips WHERE trip_id = ? LIMIT 1";
     $stmt = mysqli_prepare($conn, $sql);
     mysqli_stmt_bind_param($stmt, "i", $trip_id);
     mysqli_stmt_execute($stmt);
@@ -111,7 +111,7 @@ function decrement_trip_seats($trip_id, $seats)
 {
     global $conn;
 
-    $sql  = "UPDATE trips SET available_seats = available_seats - ? WHERE trip_id = ? AND available_seats >= ?";
+    $sql = "UPDATE trips SET available_seats = available_seats - ? WHERE trip_id = ? AND available_seats >= ?";
     $stmt = mysqli_prepare($conn, $sql);
     mysqli_stmt_bind_param($stmt, "iii", $seats, $trip_id, $seats);
     mysqli_stmt_execute($stmt);
@@ -124,7 +124,7 @@ function increment_trip_seats($trip_id, $seats)
 {
     global $conn;
 
-    $sql  = "UPDATE trips SET available_seats = available_seats + ? WHERE trip_id = ?";
+    $sql = "UPDATE trips SET available_seats = available_seats + ? WHERE trip_id = ?";
     $stmt = mysqli_prepare($conn, $sql);
     mysqli_stmt_bind_param($stmt, "ii", $seats, $trip_id);
 
@@ -164,7 +164,8 @@ function get_popular_routes($limit = 4)
 // Handles the core schedule joining buses, routes, and drivers
 // ==========================================
 
-function get_trips($conn) {
+function get_trips($conn)
+{
     $sql = "SELECT t.trip_id, t.trip_date, t.departure_time, t.arrival_time, t.fare, t.available_seats, t.status,
                    b.bus_number, b.name AS bus_name, 
                    r.origin, r.destination, 
@@ -178,7 +179,8 @@ function get_trips($conn) {
     return mysqli_fetch_all($res, MYSQLI_ASSOC);
 }
 
-function get_trip($conn, $id) {
+function get_trip($conn, $id)
+{
     $sql = "SELECT trip_id, bus_id, route_id, driver_id, trip_date, departure_time, arrival_time, fare, available_seats, status 
             FROM trips WHERE trip_id = ?";
     $stmt = mysqli_prepare($conn, $sql);
@@ -189,7 +191,8 @@ function get_trip($conn, $id) {
     return $row;
 }
 
-function search_trips_admin($conn, $term) {
+function search_trips_admin($conn, $term)
+{
     $like = '%' . $term . '%';
     $sql = "SELECT t.trip_id, t.trip_date, t.departure_time, t.arrival_time, t.fare, t.available_seats, t.status,
                    b.bus_number, b.name AS bus_name, 
@@ -209,7 +212,8 @@ function search_trips_admin($conn, $term) {
     return $rows;
 }
 
-function add_trip($conn, $bus_id, $route_id, $driver_id, $trip_date, $departure_time, $arrival_time, $fare, $available_seats, $status) {
+function add_trip($conn, $bus_id, $route_id, $driver_id, $trip_date, $departure_time, $arrival_time, $fare, $available_seats, $status)
+{
     $sql = "INSERT INTO trips (bus_id, route_id, driver_id, trip_date, departure_time, arrival_time, fare, available_seats, status) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt = mysqli_prepare($conn, $sql);
@@ -220,7 +224,8 @@ function add_trip($conn, $bus_id, $route_id, $driver_id, $trip_date, $departure_
     return $ok;
 }
 
-function update_trip($conn, $id, $bus_id, $route_id, $driver_id, $trip_date, $departure_time, $arrival_time, $fare, $available_seats, $status) {
+function update_trip($conn, $id, $bus_id, $route_id, $driver_id, $trip_date, $departure_time, $arrival_time, $fare, $available_seats, $status)
+{
     $sql = "UPDATE trips 
             SET bus_id = ?, route_id = ?, driver_id = ?, trip_date = ?, departure_time = ?, arrival_time = ?, fare = ?, available_seats = ?, status = ? 
             WHERE trip_id = ?";
@@ -232,10 +237,20 @@ function update_trip($conn, $id, $bus_id, $route_id, $driver_id, $trip_date, $de
     return $ok;
 }
 
-function delete_trip($conn, $id) {
+function delete_trip($conn, $id)
+{
     $stmt = mysqli_prepare($conn, "DELETE FROM trips WHERE trip_id = ?");
     mysqli_stmt_bind_param($stmt, 'i', $id);
     $ok = mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);
     return $ok;
+}
+
+// Drivers only — for the trip assignment dropdown
+function get_drivers()
+{
+    global $conn;
+    $sql = "SELECT user_id, name FROM users WHERE role = 'driver' ORDER BY name ASC";
+    $res = mysqli_query($conn, $sql);
+    return mysqli_fetch_all($res, MYSQLI_ASSOC);
 }

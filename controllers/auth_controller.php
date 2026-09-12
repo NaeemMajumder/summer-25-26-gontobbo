@@ -46,11 +46,23 @@ if ($page === 'login') {
             }
         }
         set_flash('success', 'Welcome back, ' . $user['name'] . '!');
+
+        // role-based redirect
+        if ($user['role'] === 'admin') {
+            redirect('index.php?page=admin');
+        } elseif ($user['role'] === 'driver') {
+            redirect('index.php?page=driver');
+        } elseif ($user['role'] === 'manager') {
+            redirect('index.php?page=manager');
+        }
         redirect('index.php?page=passenger');
     }
     require __DIR__ . '/../views/auth/login.php';
     exit;
 }
+/*
+REGISTER
+*/
 /*
 REGISTER
 */
@@ -61,13 +73,39 @@ if ($page === 'register') {
     if (is_post()) {
 
         csrf_check();
+
         $name = clean_input($_POST['name'] ?? '');
         $email = clean_input($_POST['email'] ?? '');
         $phone = clean_input($_POST['phone'] ?? '');
         $password = $_POST['password'] ?? '';
         $confirm = $_POST['confirm_password'] ?? '';
-        set_old(['name' => $name, 'email' => $email, 'phone' => $phone]);
+        $role = clean_input($_POST['role'] ?? 'passenger');
 
+        // role-specific inputs
+        $nid = clean_input($_POST['nid_number'] ?? '');
+        $license = clean_input($_POST['license_number'] ?? '');
+        $experience = clean_input($_POST['experience_years'] ?? '');
+        $prevCompany = clean_input($_POST['previous_company'] ?? '');
+
+        // keep the form filled on redirect back
+        set_old([
+            'name' => $name,
+            'email' => $email,
+            'phone' => $phone,
+            'role' => $role,
+            'nid_number' => $nid,
+            'license_number' => $license,
+            'experience_years' => $experience,
+            'previous_company' => $prevCompany,
+        ]);
+
+        // SECURITY: only these three roles may self-register. Never admin.
+        if (!in_array($role, ['passenger', 'driver', 'manager'], true)) {
+            set_flash('error', 'Please choose a valid account type.');
+            redirect('index.php?page=register');
+        }
+
+        // common validation
         if (is_blank($name) || is_blank($email) || is_blank($phone) || is_blank($password)) {
             set_flash('error', 'All fields are required.');
             redirect('index.php?page=register');
@@ -88,13 +126,51 @@ if ($page === 'register') {
             set_flash('error', 'Passwords do not match.');
             redirect('index.php?page=register');
         }
+
+        // role-specific validation
+        if ($role === 'passenger') {
+            if (!valid_idnum($nid)) {
+                set_flash('error', 'Please enter a valid NID number.');
+                redirect('index.php?page=register');
+            }
+            $license = null;
+            $experience = null;
+            $prevCompany = null;
+        } elseif ($role === 'driver') {
+            if (!valid_idnum($license)) {
+                set_flash('error', 'Please enter a valid license number.');
+                redirect('index.php?page=register');
+            }
+            $nid = null;
+            $experience = null;
+            $prevCompany = null;
+        } elseif ($role === 'manager') {
+            if ($experience === '' || !is_numeric($experience) || (int) $experience < 0) {
+                set_flash('error', 'Please enter your years of experience.');
+                redirect('index.php?page=register');
+            }
+            $experience = (int) $experience;
+            $prevCompany = is_blank($prevCompany) ? null : $prevCompany; // optional
+            $nid = null;
+            $license = null;
+        }
+
         if (find_user_by_email_or_phone($email, $phone)) {
             set_flash('error', 'That email or phone number is already registered.');
             redirect('index.php?page=register');
         }
-        // Registration only ever creates Passenger accounts in this build.
-        // Driver / Admin / Manager registration belongs to a separate module.
-        $userId = create_user($name, $email, $phone, $password, 'passenger');
+
+        $userId = create_user(
+            $name,
+            $email,
+            $phone,
+            $password,
+            $role,
+            $nid,
+            $license,
+            $experience,
+            $prevCompany
+        );
 
         if ($userId) {
             clear_old();

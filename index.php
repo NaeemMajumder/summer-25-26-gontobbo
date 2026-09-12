@@ -21,6 +21,15 @@ switch ($page) {
     case 'passenger':
         require __DIR__ . '/controllers/passenger_controller.php';
         break;
+    case 'admin':
+        require __DIR__ . '/controllers/admin_controller.php';
+        break;
+    case 'driver':
+        require __DIR__ . '/controllers/driver_controller.php';
+        break;
+    case 'manager':
+        require __DIR__ . '/controllers/manager_controller.php';
+        break;
     case 'dashboard':
     default:
         // The public landing page doubles as the passenger dashboard/home.

@@ -1,6 +1,6 @@
 <?php
-models/route_model.php
-*/
+// models/route_model.php
+
 
 
 function get_route_by_id($route_id)

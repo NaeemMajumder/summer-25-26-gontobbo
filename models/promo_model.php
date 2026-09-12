@@ -1,6 +1,6 @@
 <?php
-models/promo_model.php
-*/
+// models/promo_model.php
+
 
 
 function get_promo_by_code($code)

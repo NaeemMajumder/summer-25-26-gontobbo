@@ -1,6 +1,6 @@
 <?php
-models/feedback_model.php
-*/
+// models/feedback_model.php
+
 
 
 // $user_id may be null — guests can also leave feedback (schema allows it)
