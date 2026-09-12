@@ -11,7 +11,7 @@ const TRIP_SORT_COLUMNS = [
 ];
 
 
-function search_trips($from, $to, $date, $type = '', $sort = 'departure')
+function search_trips($from = '', $to = '', $date = '', $type = '', $sort = 'departure')
 {
     global $conn;
 
@@ -29,14 +29,32 @@ function search_trips($from, $to, $date, $type = '', $sort = 'departure')
         INNER JOIN buses b  ON t.bus_id = b.bus_id
         INNER JOIN routes r ON t.route_id = r.route_id
         LEFT JOIN reviews rv ON rv.bus_id = b.bus_id
-        WHERE r.origin = ?
-          AND r.destination = ?
-          AND t.trip_date = ?
-          AND t.status = 'scheduled'
+        WHERE t.status = 'scheduled'
     ";
 
-    $types = "sss";
-    $params = [$from, $to, $date];
+    $types = "";
+    $params = [];
+
+    if ($from !== '') {
+        $sql .= " AND r.origin = ? ";
+        $types .= "s";
+        $params[] = $from;
+    }
+
+    if ($to !== '') {
+        $sql .= " AND r.destination = ? ";
+        $types .= "s";
+        $params[] = $to;
+    }
+
+    if ($date !== '') {
+        $sql .= " AND t.trip_date = ? ";
+        $types .= "s";
+        $params[] = $date;
+    } else {
+        // No date chosen — still hide trips that have already left
+        $sql .= " AND t.trip_date >= CURDATE() ";
+    }
 
     if ($type === 'AC' || $type === 'Non-AC') {
         $sql .= " AND b.type = ? ";
@@ -47,7 +65,11 @@ function search_trips($from, $to, $date, $type = '', $sort = 'departure')
     $sql .= " GROUP BY t.trip_id ORDER BY {$orderBy} ";
 
     $stmt = mysqli_prepare($conn, $sql);
-    mysqli_stmt_bind_param($stmt, $types, ...$params);
+
+    if ($types !== '') {
+        mysqli_stmt_bind_param($stmt, $types, ...$params);
+    }
+
     mysqli_stmt_execute($stmt);
 
     $result = mysqli_stmt_get_result($stmt);

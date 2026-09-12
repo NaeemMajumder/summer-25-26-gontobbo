@@ -344,7 +344,7 @@ function format_currency($amount)
 
 function ticket_code($booking_id)
 {
-    return 'GNT-' . str_pad((string) $booking_id, 6, '0', STR_PAD_LEFT);
+    return 'GNT-' . (int) $booking_id;
 }
 
 

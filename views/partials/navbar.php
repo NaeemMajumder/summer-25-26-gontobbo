@@ -42,13 +42,26 @@ $role = current_role();
 
             <?php elseif ($role === 'driver'): ?>
 
-                <a href="index.php?page=driver">Dashboard</a>
+                <a href="index.php?page=driver" class="<?= $activePage === 'dashboard' ? 'active' : '' ?>">Dashboard</a>
+                <a href="index.php?page=driver&action=availability"
+                    class="<?= $activePage === 'availability' ? 'active' : '' ?>">Availability</a><a
+                    href="index.php?page=driver&action=incidents"
+                    class="<?= $activePage === 'incidents' ? 'active' : '' ?>">Incidents</a>
+                <a href="index.php?page=driver&action=logs" class="<?= $activePage === 'logs' ? 'active' : '' ?>">Logs</a>
+                <a href="index.php?page=driver&action=verify"
+                    class="<?= $activePage === 'verify' ? 'active' : '' ?>">Verify</a>
 
             <?php elseif ($role === 'manager'): ?>
 
-                <a href="index.php?page=manager">Dashboard</a>
+                <a href="index.php?page=manager" class="<?= $activePage === 'dashboard' ? 'active' : '' ?>">Dashboard</a>
+                <a href="index.php?page=manager&action=parts"
+                    class="<?= $activePage === 'parts' ? 'active' : '' ?>">Parts</a>
+                <a href="index.php?page=manager&action=requests"
+                    class="<?= $activePage === 'requests' ? 'active' : '' ?>">Requests</a>
+                <a href="index.php?page=manager&action=services"
+                    class="<?= $activePage === 'services' ? 'active' : '' ?>">Services</a>
 
-            <?php else: ?>
+            <?php elseif ($role === 'passenger'): ?>
 
                 <a href="index.php?page=passenger" class="<?= $activePage === 'dashboard' ? 'active' : '' ?>">Home</a>
                 <a href="index.php?page=passenger&action=search"
