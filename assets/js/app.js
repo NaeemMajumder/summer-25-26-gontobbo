@@ -54,21 +54,15 @@ function runSearch() {
   const dateEl = document.getElementById("journeyDate");
   const resultBox = document.getElementById("busResults");
 
-  if (!resultBox || !fromEl || !toEl || !dateEl) {
+  if (!resultBox) {
     return;
   }
 
-  const from = fromEl.value;
-  const to = toEl.value;
-  const date = dateEl.value;
+  const from = fromEl ? fromEl.value : "";
+  const to = toEl ? toEl.value : "";
+  const date = dateEl ? dateEl.value : "";
 
-  if (!from || !to || !date) {
-    resultBox.innerHTML =
-      '<p class="muted-text">Please select From, To and a travel date.</p>';
-    return;
-  }
-
-  if (from === to) {
+  if (from && to && from === to) {
     resultBox.innerHTML =
       '<p class="muted-text">Origin and destination cannot be the same.</p>';
     return;
@@ -539,20 +533,7 @@ document.addEventListener("DOMContentLoaded", function () {
       sortSelect.addEventListener("change", runSearch);
     }
 
-    const fromEl = document.getElementById("from");
-    const toEl = document.getElementById("to");
-    const dateEl = document.getElementById("journeyDate");
-
-    if (
-      fromEl &&
-      toEl &&
-      dateEl &&
-      fromEl.value &&
-      toEl.value &&
-      dateEl.value
-    ) {
-      runSearch();
-    }
+    runSearch();
   }
 
   /* Trip Details / Booking page — seat control wired to live fare recalculation */

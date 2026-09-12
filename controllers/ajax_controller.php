@@ -18,14 +18,11 @@ if ($action === 'search_trips') {
     $type = clean_input($_GET['type'] ?? '');
     $sort = clean_input($_GET['sort'] ?? 'departure');
 
-    if (is_blank($from) || is_blank($to) || is_blank($date)) {
-        json_out(['status' => 'error', 'message' => 'From, To and Date are all required.']);
-    }
-
-    if (!valid_date($date)) {
+    // All 3 are now optional — a blank value just means "don't filter on this".
+    if (!is_blank($date) && !valid_date($date)) {
         json_out(['status' => 'error', 'message' => 'Please choose a valid travel date.']);
     }
-    if ($from === $to) {
+    if (!is_blank($from) && !is_blank($to) && $from === $to) {
         json_out(['status' => 'error', 'message' => 'Origin and destination cannot be the same.']);
     }
 
@@ -131,6 +128,56 @@ if ($action === 'fare_calc') {
         'total_display' => format_currency($totals['total']),
         'promo_valid' => $promoValid,
         'promo_note' => $promoNote,
+    ]);
+}
+/*
+verify&code=
+Driver-only: looks up a ticket code and confirms it belongs to one of this driver's trips.
+*/
+if ($action === 'verify') {
+
+    require_once __DIR__ . '/../models/booking_model.php';
+
+    // No require_role() here on purpose — that helper redirects on failure,
+    // which breaks a fetch() call expecting JSON. We check manually instead.
+    if (!is_logged_in() || current_role() !== 'driver') {
+        json_out(['status' => 'error', 'message' => 'Not authorised.'], 403);
+    }
+
+    $code = clean_input($_GET['code'] ?? '');
+
+    if (!preg_match('/^GNT-(\d+)$/i', $code, $matches)) {
+        json_out(['status' => 'error', 'message' => 'Invalid ticket code format.']);
+    }
+
+    $bookingId = (int) $matches[1];
+    $booking = get_booking_for_verification($bookingId);
+
+    if (!$booking) {
+        json_out(['status' => 'error', 'message' => 'Ticket not found.']);
+    }
+
+    if ((int) $booking['driver_id'] !== current_user_id()) {
+        json_out(['status' => 'error', 'message' => 'This ticket is not for one of your trips.']);
+    }
+
+    if ($booking['booking_status'] !== 'confirmed') {
+        json_out(['status' => 'error', 'message' => 'This ticket has been cancelled.']);
+    }
+
+    json_out([
+        'status' => 'success',
+        'data' => [
+            'booking_id' => (int) $booking['booking_id'],
+            'passenger_name' => $booking['passenger_name'],
+            'seats_booked' => (int) $booking['seats_booked'],
+            'route' => $booking['origin'] . ' -> ' . $booking['destination'],
+            'trip_date' => $booking['trip_date'],
+            'boarding_stop' => $booking['boarding_stop'] ?? '-',
+            'dropping_stop' => $booking['dropping_stop'] ?? '-',
+            'wheelchair' => (bool) $booking['wheelchair'],
+            'payment_status' => $booking['payment_status'],
+        ],
     ]);
 }
 /*
