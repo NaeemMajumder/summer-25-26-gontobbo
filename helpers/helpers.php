@@ -280,6 +280,12 @@ function valid_password($password)
     return strlen($password) >= 6;
 }
 
+function valid_idnum($value)
+{
+    // NID / License: digits, letters, dash, space — 5 to 30 chars
+    return (bool) preg_match('/^[A-Za-z0-9\- ]{5,30}$/', trim((string) $value));
+}
+
 
 function is_blank($value)
 {
