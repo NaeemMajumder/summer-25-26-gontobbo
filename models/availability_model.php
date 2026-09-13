@@ -13,7 +13,6 @@ function get_driver_availability($conn, $driver_id)
     return $rows;
 }
 
-
 // One entry (ownership-checked with driver_id) — used for edit-prefill
 function get_availability($conn, $availability_id, $driver_id)
 {
@@ -26,7 +25,6 @@ function get_availability($conn, $availability_id, $driver_id)
     return $row;
 }
 
-
 function add_availability($conn, $driver_id, $date, $status, $note = '')
 {
     $sql = "INSERT INTO driver_availability (driver_id, date, status, note) VALUES (?, ?, ?, ?)";
@@ -36,7 +34,6 @@ function add_availability($conn, $driver_id, $date, $status, $note = '')
     mysqli_stmt_close($stmt);
     return $ok;
 }
-
 
 // Ownership-checked in the WHERE — a driver can only ever update their own row
 function update_availability($conn, $availability_id, $driver_id, $date, $status, $note = '')
@@ -50,7 +47,6 @@ function update_availability($conn, $availability_id, $driver_id, $date, $status
     mysqli_stmt_close($stmt);
     return $ok;
 }
-
 
 // Ownership-checked in the WHERE — same guard as above
 function delete_availability($conn, $availability_id, $driver_id)
