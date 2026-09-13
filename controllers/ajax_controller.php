@@ -35,6 +35,7 @@ if ($action === 'search_trips') {
     $data = array_map(function ($t) {
         return [
             'trip_id' => (int) $t['trip_id'],
+            'trip_date' => $t['trip_date'],
             'bus_name' => $t['bus_name'],
             'bus_number' => $t['bus_number'],
             'bus_type' => $t['bus_type'],

@@ -62,7 +62,7 @@ function search_trips($from = '', $to = '', $date = '', $type = '', $sort = 'dep
         $params[] = $type;
     }
 
-    $sql .= " GROUP BY t.trip_id ORDER BY {$orderBy} ";
+    $sql .= " GROUP BY t.trip_id ORDER BY t.trip_date ASC, {$orderBy} ";
 
     $stmt = mysqli_prepare($conn, $sql);
 
