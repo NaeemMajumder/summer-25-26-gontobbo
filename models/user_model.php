@@ -209,3 +209,48 @@ function set_user_status($conn, $id, $status) {
     mysqli_stmt_close($stmt);
     return $ok;
 }
+
+/* ---------- ADMIN: paginated user list + role management ---------- */
+
+function count_users($conn, $role = '') {
+    if ($role === '') {
+        $res = mysqli_query($conn, "SELECT COUNT(*) AS total FROM users");
+        $row = mysqli_fetch_assoc($res);
+        return (int) $row['total'];
+    }
+    $stmt = mysqli_prepare($conn, "SELECT COUNT(*) AS total FROM users WHERE role = ?");
+    mysqli_stmt_bind_param($stmt, 's', $role);
+    mysqli_stmt_execute($stmt);
+    $row = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
+    mysqli_stmt_close($stmt);
+    return (int) $row['total'];
+}
+
+function get_users_paginated($conn, $page = 1, $perPage = 10, $role = '') {
+    $offset = ($page - 1) * $perPage;
+
+    if ($role === '') {
+        $sql = "SELECT user_id, name, email, phone, role, created_at
+                FROM users ORDER BY user_id DESC LIMIT ? OFFSET ?";
+        $stmt = mysqli_prepare($conn, $sql);
+        mysqli_stmt_bind_param($stmt, 'ii', $perPage, $offset);
+    } else {
+        $sql = "SELECT user_id, name, email, phone, role, created_at
+                FROM users WHERE role = ? ORDER BY user_id DESC LIMIT ? OFFSET ?";
+        $stmt = mysqli_prepare($conn, $sql);
+        mysqli_stmt_bind_param($stmt, 'sii', $role, $perPage, $offset);
+    }
+    mysqli_stmt_execute($stmt);
+    $rows = mysqli_fetch_all(mysqli_stmt_get_result($stmt), MYSQLI_ASSOC);
+    mysqli_stmt_close($stmt);
+    return $rows;
+}
+
+function update_user_role($conn, $user_id, $new_role) {
+    $sql = "UPDATE users SET role = ? WHERE user_id = ?";
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($stmt, 'si', $new_role, $user_id);
+    $ok = mysqli_stmt_execute($stmt);
+    mysqli_stmt_close($stmt);
+    return $ok;
+}

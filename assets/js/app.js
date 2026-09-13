@@ -128,7 +128,9 @@ function runSearch() {
           " &rarr; " +
           escapeHtml(bus.destination) +
           "</p>" +
-          "<p>Departure: " +
+          "<p>" +
+          escapeHtml(bus.trip_date) +
+          " &middot; Departure: " +
           escapeHtml(formatTime(bus.departure_time)) +
           " &middot; Arrival: " +
           escapeHtml(formatTime(bus.arrival_time)) +
@@ -536,9 +538,16 @@ if (searchForm) {
   runSearch();
 }
 
-/* Trip Details / Booking page — seat control wired to live fare recalculation */
-const recalc = initFareCalc();
-initSeatControl(recalc);
+    const fromEl = document.getElementById("from");
+    const toEl = document.getElementById("to");
+    const dateEl = document.getElementById("journeyDate");
+
+    if (fromEl) fromEl.addEventListener("change", runSearch);
+    if (toEl) toEl.addEventListener("change", runSearch);
+    if (dateEl) dateEl.addEventListener("change", runSearch);
+
+    runSearch();
+  }
 
 /* Login / Register client-side validation */
 const loginForm = document.getElementById("loginForm");

@@ -24,12 +24,53 @@ ADMIN DASHBOARD
 */
 if ($action === 'dashboard') {
 
+    $perPage = 10;
+    $page = max(1, (int) ($_GET['p'] ?? 1));
+
+    $totalUsers = count_users($conn);
+    $totalPages = max(1, (int) ceil($totalUsers / $perPage));
+    $page = min($page, $totalPages);
+
+    $users = get_users_paginated($conn, $page, $perPage);
+
     $pageTitle = 'Admin Dashboard';
     $pageHeading = 'Admin Dashboard';
     $pageSub = 'System overview and management';
 
     require __DIR__ . '/../views/admin/dashboard.php';
     exit;
+}
+
+
+/*
+==========================================================
+USER — UPDATE ROLE (POST + CSRF)
+==========================================================
+*/
+if ($action === 'updateuserrole' && is_post()) {
+
+    csrf_check();
+
+    $id = (int) ($_POST['user_id'] ?? 0);
+    $newRole = clean_input($_POST['role'] ?? '');
+    $backToPage = (int) ($_POST['p'] ?? 1);
+
+    if (!in_array($newRole, ['passenger', 'driver', 'admin', 'manager'], true)) {
+        set_flash('error', 'Please choose a valid role.');
+        redirect('index.php?page=admin&action=dashboard&p=' . $backToPage);
+    }
+
+    if ($id === current_user_id()) {
+        set_flash('error', 'You cannot change your own role.');
+        redirect('index.php?page=admin&action=dashboard&p=' . $backToPage);
+    }
+
+    if ($id > 0 && update_user_role($conn, $id, $newRole)) {
+        set_flash('success', 'User role updated.');
+    } else {
+        set_flash('error', 'Could not update role.');
+    }
+    redirect('index.php?page=admin&action=dashboard&p=' . $backToPage);
 }
 
 
