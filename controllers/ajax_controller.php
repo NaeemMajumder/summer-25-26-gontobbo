@@ -75,6 +75,7 @@ if ($action === 'route_stops') {
     $stops = get_stops_by_route($routeId);
 
     json_out(['status' => 'success', 'data' => $stops]);
+    exit;
 }
 /*
  fare_calc&trip_id=&seats=&promo_code=
@@ -98,7 +99,9 @@ if ($action === 'fare_calc') {
 
     if ($seats > (int) $trip['available_seats']) {
         json_out(['status' => 'error', 'message' => 'Only ' . $trip['available_seats'] . ' seat(s) left.']);
+        exit;
     }
+
 
     $promo = null;
     $promoValid = null;
