@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 10, 2026 at 09:38 PM
+-- Generation Time: Sep 13, 2026 at 12:37 PM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- PHP Version: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -81,7 +81,8 @@ INSERT INTO `buses` (`bus_id`, `bus_number`, `name`, `type`, `total_seats`, `sta
 (2, 'DHAKA-BA-2001', 'Hanif Enterprise', 'AC', 40, 'active', 50, 0),
 (3, 'DHAKA-BA-2002', 'Shyamoli NR Travels', 'AC', 36, 'active', 50, 0),
 (4, 'DHAKA-BA-2003', 'Ena Transport', 'Non-AC', 40, 'active', 50, 0),
-(5, 'DH-5678', 'Hanif Enterprise', NULL, 36, NULL, NULL, 0);
+(5, 'DH-5678', 'Hanif Enterprise', NULL, 36, NULL, NULL, 0),
+(9, 'TEST-9999', 'TEST BUS', 'AC', 40, 'active', 50, 0);
 
 -- --------------------------------------------------------
 
@@ -96,6 +97,14 @@ CREATE TABLE `driver_availability` (
   `status` enum('available','off_day','on_duty') DEFAULT NULL,
   `note` varchar(150) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `driver_availability`
+--
+
+INSERT INTO `driver_availability` (`availability_id`, `driver_id`, `date`, `status`, `note`) VALUES
+(2, 18, '2026-09-14', 'available', 'helllo'),
+(3, 18, '2026-09-13', 'on_duty', 'asdfasf');
 
 -- --------------------------------------------------------
 
@@ -135,6 +144,13 @@ CREATE TABLE `incident_reports` (
   `created_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `incident_reports`
+--
+
+INSERT INTO `incident_reports` (`incident_id`, `driver_id`, `trip_id`, `bus_id`, `type`, `description`, `status`, `created_at`) VALUES
+(1, 18, 140, 3, 'incident', 'hello', 'open', '2026-09-13 00:48:10');
+
 -- --------------------------------------------------------
 
 --
@@ -150,6 +166,14 @@ CREATE TABLE `maintenance_requests` (
   `created_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `maintenance_requests`
+--
+
+INSERT INTO `maintenance_requests` (`request_id`, `bus_id`, `manager_id`, `issue`, `status`, `created_at`) VALUES
+(1, 1, 20, 'service issue', 'done', '2026-09-13 02:18:00'),
+(2, 2, 20, 'tire issue', 'cancelled', '2026-09-13 02:19:19');
+
 -- --------------------------------------------------------
 
 --
@@ -164,6 +188,13 @@ CREATE TABLE `promo_codes` (
   `expiry_date` date DEFAULT NULL,
   `is_active` tinyint(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `promo_codes`
+--
+
+INSERT INTO `promo_codes` (`promo_id`, `code`, `discount_type`, `discount_value`, `expiry_date`, `is_active`) VALUES
+(1, 'EID2026', 'percent', 10.00, '2026-09-18', 0);
 
 -- --------------------------------------------------------
 
@@ -266,6 +297,13 @@ CREATE TABLE `service_history` (
   `created_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `service_history`
+--
+
+INSERT INTO `service_history` (`service_id`, `bus_id`, `manager_id`, `service_date`, `work_done`, `cost`, `created_at`) VALUES
+(1, 1, 20, '2026-09-16', 'work done', 100.00, '2026-09-13 02:26:13');
+
 -- --------------------------------------------------------
 
 --
@@ -278,6 +316,13 @@ CREATE TABLE `service_parts` (
   `part_id` int(11) DEFAULT NULL,
   `quantity_used` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `service_parts`
+--
+
+INSERT INTO `service_parts` (`id`, `service_id`, `part_id`, `quantity_used`) VALUES
+(1, 1, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -292,6 +337,13 @@ CREATE TABLE `spare_parts` (
   `unit_price` decimal(8,2) DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `spare_parts`
+--
+
+INSERT INTO `spare_parts` (`part_id`, `part_name`, `stock_quantity`, `unit_price`, `updated_at`) VALUES
+(1, 'hello', 0, 10.00, '2026-09-13 02:26:13');
 
 -- --------------------------------------------------------
 
@@ -401,7 +453,9 @@ INSERT INTO `trips` (`trip_id`, `bus_id`, `route_id`, `driver_id`, `trip_date`, 
 (82, 5, 5, NULL, '2026-09-14', '21:00:00', '03:30:00', 850.00, 36, 'scheduled'),
 (83, 5, 5, NULL, '2026-09-15', '21:00:00', '03:30:00', 850.00, 36, 'scheduled'),
 (136, 3, 2, NULL, '2026-09-11', '10:00:00', '12:45:00', 850.00, 42, 'completed'),
-(137, 3, 2, NULL, '2026-09-11', '10:00:00', '00:40:00', 850.00, 44, 'scheduled');
+(137, 3, 2, NULL, '2026-09-11', '10:00:00', '00:40:00', 850.00, 44, 'scheduled'),
+(139, 4, 5, 18, '2026-09-13', '01:27:00', '03:28:00', 199.00, 36, 'scheduled'),
+(140, 3, 4, 18, '2026-09-13', '00:31:00', '05:30:00', 123.00, 36, 'scheduled');
 
 -- --------------------------------------------------------
 
@@ -432,6 +486,12 @@ CREATE TABLE `users` (
   `phone` varchar(20) DEFAULT NULL,
   `password` varchar(255) NOT NULL,
   `role` enum('passenger','driver','admin','manager') NOT NULL,
+  `nid_number` varchar(30) DEFAULT NULL,
+  `license_number` varchar(50) DEFAULT NULL,
+  `experience_years` int(11) DEFAULT NULL,
+  `previous_company` varchar(150) DEFAULT NULL,
+  `reset_token` varchar(100) DEFAULT NULL,
+  `remember_token` varchar(100) DEFAULT NULL,
   `created_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -439,16 +499,20 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`user_id`, `name`, `email`, `phone`, `password`, `role`, `created_at`) VALUES
-(1, 'alvirahman', 'alvirahman2052@gmail.com', '01316232886', '$2y$10$.FOz0Q9XxydCTVui.Mtey.jFIPJNKNwsgsnSEnigFb3LFhLDYShyG', 'passenger', '2026-08-31 23:01:25'),
-(2, 'Test Driver', 'driver@test.com', '01700000000', 'TEMP_PASSWORD', 'driver', '2026-08-31 23:24:42'),
-(3, 'Alu Bhai', 'alubhai2001@gmail.com', '1316232886', '$2y$10$Gy.2OUv7xYZAkXQqsoqhvO6shcDJasYkcmP0N/u.kvrOxFqsajDH6', 'passenger', '2026-09-04 01:06:10'),
-(7, 'Alu_Bhai12', 'lkiy@gmail.com', '+880 1316232886', '$2y$10$EWAhdfSAK394lN2jeOuaJ.XOqMkTLj1J/fxUbkBbCgGQafE9T/kNm', 'passenger', '2026-09-04 01:27:05'),
-(8, 'ali', 'ali@gmail.com', '0123456789', '$2y$10$e4vl5i4WhMa5oZNZri7giOMwSURlc53ZB7.hh3q4FG33N9pIIh2Wm', 'passenger', '2026-09-04 01:31:00'),
-(9, 'alu', 'a7@gmail.com', '01316232778', '$2y$10$MSDQQey0le/GN3uMJ210c.i6K0viSHynIDlewgvTd196rENOkvure', 'passenger', '2026-09-04 23:59:09'),
-(12, 'prity', 'prity@gmail.com', '01316232884', '$2y$10$Fhr7LoqR5gdsG7Qs9kgUzenX.lJxjZtASZ6eyc8j5OC7CVKD6yrK2', 'passenger', '2026-09-08 00:00:49'),
-(15, 'System Admin', 'admin@bus.com', '01700000001', '$2y$10$i8vNTzvt.yPfxvWIBavYS.ayivJOv2msiipNJSnhsbJzI0fs/sD6e', 'admin', '2026-09-09 19:01:06'),
-(16, 'alvi boss', 'alvi@gmail.com', '01316232887', '$2y$10$10T9bHkX03KoqqCKF91m8OgwiJYcQtD8VzCWRTBNckeYa6pBrBLw2', 'passenger', '2026-09-10 21:41:19');
+INSERT INTO `users` (`user_id`, `name`, `email`, `phone`, `password`, `role`, `nid_number`, `license_number`, `experience_years`, `previous_company`, `reset_token`, `remember_token`, `created_at`) VALUES
+(1, 'alvirahman', 'alvirahman2052@gmail.com', '01316232886', '$2y$10$.FOz0Q9XxydCTVui.Mtey.jFIPJNKNwsgsnSEnigFb3LFhLDYShyG', 'passenger', NULL, NULL, NULL, NULL, NULL, NULL, '2026-08-31 23:01:25'),
+(2, 'Test Driver', 'driver@test.com', '01700000000', 'TEMP_PASSWORD', 'driver', NULL, NULL, NULL, NULL, NULL, NULL, '2026-08-31 23:24:42'),
+(3, 'Alu Bhai', 'alubhai2001@gmail.com', '1316232886', '$2y$10$Gy.2OUv7xYZAkXQqsoqhvO6shcDJasYkcmP0N/u.kvrOxFqsajDH6', 'passenger', NULL, NULL, NULL, NULL, NULL, NULL, '2026-09-04 01:06:10'),
+(7, 'Alu_Bhai12', 'lkiy@gmail.com', '+880 1316232886', '$2y$10$EWAhdfSAK394lN2jeOuaJ.XOqMkTLj1J/fxUbkBbCgGQafE9T/kNm', 'passenger', NULL, NULL, NULL, NULL, NULL, NULL, '2026-09-04 01:27:05'),
+(8, 'ali', 'ali@gmail.com', '0123456789', '$2y$10$e4vl5i4WhMa5oZNZri7giOMwSURlc53ZB7.hh3q4FG33N9pIIh2Wm', 'passenger', NULL, NULL, NULL, NULL, NULL, NULL, '2026-09-04 01:31:00'),
+(9, 'alu', 'a7@gmail.com', '01316232778', '$2y$10$MSDQQey0le/GN3uMJ210c.i6K0viSHynIDlewgvTd196rENOkvure', 'passenger', NULL, NULL, NULL, NULL, NULL, NULL, '2026-09-04 23:59:09'),
+(12, 'prity', 'prity@gmail.com', '01316232884', '$2y$10$Fhr7LoqR5gdsG7Qs9kgUzenX.lJxjZtASZ6eyc8j5OC7CVKD6yrK2', 'passenger', NULL, NULL, NULL, NULL, NULL, NULL, '2026-09-08 00:00:49'),
+(15, 'System Admin', 'admin@bus.com', '01700000001', '$2y$10$1xJnK6y35OXDfhXFNBSOleFf2DZjay31tNJVGUDE54f79H9zirxhu', 'admin', NULL, NULL, NULL, NULL, NULL, NULL, '2026-09-09 19:01:06'),
+(16, 'alvi boss', 'alvi@gmail.com', '01316232887', '$2y$10$10T9bHkX03KoqqCKF91m8OgwiJYcQtD8VzCWRTBNckeYa6pBrBLw2', 'passenger', NULL, NULL, NULL, NULL, NULL, NULL, '2026-09-10 21:41:19'),
+(17, 'Hello Passenger', 'hellopassenger@gmail.com', '01233233232', '$2y$10$FrO5n046quRCp9mwSSbgh.55QmQfLDC.WU0bSJKfcxN842JL3kE32', 'passenger', '92738372932', NULL, NULL, NULL, 'dc2df66261f732d95631d8b729dd7851cb788f8402f6bc1cf4dd386de2af0757', NULL, '2026-09-12 14:40:18'),
+(18, 'driver', 'driver@gmail.com', '01822322323', '$2y$10$UFOnzZxlXzsiznX.0pphbOs4u5w.SE1IMRGIcnUMG47SurlV4uHn2', 'driver', NULL, '03937293237392', NULL, NULL, NULL, NULL, '2026-09-12 18:36:20'),
+(19, 'passenger', 'passenger@gmail.com', '01722322323', '$2y$10$hPIDZmug2kN6DYzLl8pSI.19Udgj.gn77oH74XAYBbSn6vlc5EJKy', 'passenger', '8943434545', NULL, NULL, NULL, NULL, NULL, '2026-09-13 01:49:34'),
+(20, 'manager', 'manager@gmail.com', '01677322323', '$2y$10$XUW9VBt20BAmfwJLENWeteQHp4Fba8Cvupvp3k33kZGVz4nkgbsEa', 'manager', NULL, NULL, 5, 'xyz', NULL, NULL, '2026-09-13 02:04:52');
 
 --
 -- Indexes for dumped tables
@@ -593,13 +657,13 @@ ALTER TABLE `bookings`
 -- AUTO_INCREMENT for table `buses`
 --
 ALTER TABLE `buses`
-  MODIFY `bus_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `bus_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `driver_availability`
 --
 ALTER TABLE `driver_availability`
-  MODIFY `availability_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `availability_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `feedback`
@@ -611,19 +675,19 @@ ALTER TABLE `feedback`
 -- AUTO_INCREMENT for table `incident_reports`
 --
 ALTER TABLE `incident_reports`
-  MODIFY `incident_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `incident_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `maintenance_requests`
 --
 ALTER TABLE `maintenance_requests`
-  MODIFY `request_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `request_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `promo_codes`
 --
 ALTER TABLE `promo_codes`
-  MODIFY `promo_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `promo_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `reviews`
@@ -635,37 +699,37 @@ ALTER TABLE `reviews`
 -- AUTO_INCREMENT for table `routes`
 --
 ALTER TABLE `routes`
-  MODIFY `route_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `route_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `route_stops`
 --
 ALTER TABLE `route_stops`
-  MODIFY `stop_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `stop_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `service_history`
 --
 ALTER TABLE `service_history`
-  MODIFY `service_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `service_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `service_parts`
 --
 ALTER TABLE `service_parts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `spare_parts`
 --
 ALTER TABLE `spare_parts`
-  MODIFY `part_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `part_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `trips`
 --
 ALTER TABLE `trips`
-  MODIFY `trip_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=138;
+  MODIFY `trip_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=141;
 
 --
 -- AUTO_INCREMENT for table `trip_logs`
@@ -677,7 +741,7 @@ ALTER TABLE `trip_logs`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- Constraints for dumped tables
