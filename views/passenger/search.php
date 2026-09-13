@@ -21,14 +21,16 @@
             <select name="to" id="to" required>
                 <option value="">Select destination</option>
                 <?php foreach ($destinations as $destination): ?>
-                    <option value="<?= esc($destination) ?>" <?= $to === $destination ? 'selected' : '' ?>><?= esc($destination) ?></option>
+                    <option value="<?= esc($destination) ?>" <?= $to === $destination ? 'selected' : '' ?>>
+                        <?= esc($destination) ?></option>
                 <?php endforeach; ?>
             </select>
         </div>
 
         <div class="form-group">
             <label for="journeyDate">Journey Date</label>
-            <input type="date" name="date" id="journeyDate" min="<?= date('Y-m-d') ?>" value="<?= esc($date) ?>" required>
+            <input type="date" name="date" id="journeyDate" min="<?= date('Y-m-d') ?>" value="<?= esc($date) ?>"
+                required>
         </div>
 
         <button type="submit" class="btn btn-primary">Search Bus</button>

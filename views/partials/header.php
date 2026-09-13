@@ -9,6 +9,7 @@ views/partials/header.php
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
     <meta charset="UTF-8">
@@ -16,7 +17,7 @@ views/partials/header.php
 
     <title><?= esc($pageTitle ?? APP_NAME) ?> - <?= esc(APP_NAME) ?></title>
 
-    <link rel="stylesheet" href="/Gontobbo/assets/css/style.css?v=4">
+    <link rel="stylesheet" href="assets/css/style.css?v=4">
 </head>
 
 <body class="app-body">

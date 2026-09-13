@@ -513,27 +513,30 @@ function validatePasswordMatch(newId, confirmId) {
 Bootstrap
 ==========================
 */
+const searchForm = document.getElementById("busSearchForm");
+if (searchForm) {
+  console.log("Search form found");
 
-document.addEventListener("DOMContentLoaded", function () {
-  /* Search Results page */
-  const searchForm = document.getElementById("busSearchForm");
+  searchForm.addEventListener("submit", function (event) {
+    event.preventDefault();
+    console.log("Search clicked");
+    runSearch();
+  });
 
-  if (searchForm) {
-    searchForm.addEventListener("submit", function (event) {
-      event.preventDefault();
-      runSearch();
+
+  document
+    .querySelectorAll('input[name="busType"]')
+    .forEach(function (radio) {
+      radio.addEventListener("change", runSearch);
     });
 
-    document
-      .querySelectorAll('input[name="busType"]')
-      .forEach(function (radio) {
-        radio.addEventListener("change", runSearch);
-      });
+  const sortSelect = document.getElementById("sortSelect");
+  if (sortSelect) {
+    sortSelect.addEventListener("change", runSearch);
+  }
 
-    const sortSelect = document.getElementById("sortSelect");
-    if (sortSelect) {
-      sortSelect.addEventListener("change", runSearch);
-    }
+  runSearch();
+}
 
     const fromEl = document.getElementById("from");
     const toEl = document.getElementById("to");
@@ -546,39 +549,34 @@ document.addEventListener("DOMContentLoaded", function () {
     runSearch();
   }
 
-  /* Trip Details / Booking page — seat control wired to live fare recalculation */
-  const recalc = initFareCalc();
-  initSeatControl(recalc);
-
-  /* Login / Register client-side validation */
-  const loginForm = document.getElementById("loginForm");
-  if (loginForm) {
-    loginForm.addEventListener("submit", function (event) {
-      if (!validateLogin()) event.preventDefault();
-    });
-  }
-
-  const registerForm = document.getElementById("registerForm");
-  if (registerForm) {
-    registerForm.addEventListener("submit", function (event) {
-      if (!validateRegister()) event.preventDefault();
-    });
-  }
-
-  initRoleToggle();
-  initPasswordEyes();
-
-  /* Any form with a New Password + Confirm Password pair (change password / reset password) */
-  document.querySelectorAll("form").forEach(function (form) {
-    if (
-      form.querySelector("#newPassword") &&
-      form.querySelector("#confirmNewPassword")
-    ) {
-      form.addEventListener("submit", function (event) {
-        if (!validatePasswordMatch("newPassword", "confirmNewPassword")) {
-          event.preventDefault();
-        }
-      });
-    }
+/* Login / Register client-side validation */
+const loginForm = document.getElementById("loginForm");
+if (loginForm) {
+  loginForm.addEventListener("submit", function (event) {
+    if (!validateLogin()) event.preventDefault();
   });
+}
+
+const registerForm = document.getElementById("registerForm");
+if (registerForm) {
+  registerForm.addEventListener("submit", function (event) {
+    if (!validateRegister()) event.preventDefault();
+  });
+}
+
+initRoleToggle();
+initPasswordEyes();
+
+/* Any form with a New Password + Confirm Password pair (change password / reset password) */
+document.querySelectorAll("form").forEach(function (form) {
+  if (
+    form.querySelector("#newPassword") &&
+    form.querySelector("#confirmNewPassword")
+  ) {
+    form.addEventListener("submit", function (event) {
+      if (!validatePasswordMatch("newPassword", "confirmNewPassword")) {
+        event.preventDefault();
+      }
+    });
+  }
 });
